@@ -2,8 +2,6 @@ import pytest
 from mems import MemeCollection
 
 
-
-
 @pytest.fixture
 def empty_collection():
     return MemeCollection()
@@ -36,10 +34,12 @@ def test_clear_collection(collection_with_memes):
 
 def test_get_by_category(collection_with_memes):
     memes = collection_with_memes.get_by_category("ситуация")
-    assert len(memes) > 0
+    assert len(memes) == 1
+    assert memes[0]["title"] == "Наташ,мы все уронили"
+    assert memes[0]["category"] == "ситуация"
 
 
-def test_empty_category(collection_with_memes):
+def test_no_category(collection_with_memes):
     memes = collection_with_memes.get_by_category("спорт")
     assert memes == []
 
@@ -55,6 +55,9 @@ def test_collection_not_empty(collection_with_memes):
 def test_new_meme_added(empty_collection):
     empty_collection.add_meme("Ждун", "мем", "440")
     assert len(empty_collection.memes) == 1
+    added_meme = empty_collection.memes[0]
+    assert added_meme["title"] == "Ждун"
+    assert added_meme["category"] == "мем"
 
 
 def test_meme_count(empty_collection):
@@ -64,11 +67,11 @@ def test_meme_count(empty_collection):
 
 
 def test_meme_data(empty_collection):
-    empty_collection.add_meme("Наташа,мы все уронили", "ситуация", "350")
+    empty_collection.add_meme("Наташа,мы все уронили", "ситуация", "600")
     meme = empty_collection.memes[0]
     assert meme["title"] == "Наташа,мы все уронили"
     assert meme["category"] == "ситуация"
-    assert meme["likes"] == 600
+    assert meme["likes"] == "600"
 
 
 def test_no_memes(empty_collection):
@@ -77,7 +80,7 @@ def test_no_memes(empty_collection):
 
 def test_popular_meme(collection_with_memes):
     meme = collection_with_memes.get_most_popular()
-    assert meme["likes"] == 950
+    assert meme["likes"] == "950"
 
 
 def test_same_likes():
@@ -86,7 +89,7 @@ def test_same_likes():
     collection.add_meme("Мем 2", "мем", "500")
 
     meme = collection.get_most_popular()
-    assert meme["likes"] == 500
+    assert meme["likes"] == "500"
 
 
 @pytest.mark.parametrize("title,category,likes",
